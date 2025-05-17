@@ -15,10 +15,10 @@ const Login = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <div className="flex-1 container max-w-lg flex flex-col items-center justify-center px-4 py-12">
+      <div className="flex-1 container max-w-lg flex flex-col items-center justify-center px-4 relative">
         <Link 
           to="/" 
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-8 hover:text-primary"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-8 hover:text-primary absolute top-3 left-3"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
