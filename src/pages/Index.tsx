@@ -1,13 +1,25 @@
 
 import Header from "@/components/Header";
 import UrlShortener from "@/components/UrlShortener";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Index = () => {
+  const { isAuthenticated, user } = useAuth();
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header className="mb-8" />
       
       <main className="flex-1 container max-w-4xl px-4">
+        {isAuthenticated && (
+          <div className="mb-8 p-4 bg-accent rounded-lg text-center">
+            <h3 className="font-medium">Welcome back, {user?.name || user?.email}!</h3>
+            <p className="text-sm text-muted-foreground">You're now logged in and can access all features.</p>
+          </div>
+        )}
+        
         <section className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Shorten Your Links
