@@ -12,7 +12,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Header className="mb-8" />
       
-      <main className="flex-1 container max-w-4xl px-4">
+      <main className="flex-1 container max-w-4xl px-4 md:relative">
         {isAuthenticated && (
           <div className="mb-8 p-4 bg-accent rounded-lg text-center">
             <h3 className="font-medium">Welcome back, {user?.name || user?.email}!</h3>
@@ -20,7 +20,7 @@ const Index = () => {
           </div>
         )}
         
-        <section className="text-center mb-12">
+        <section className="text-center mb-6">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Shorten Your Links
           </h2>
@@ -34,7 +34,7 @@ const Index = () => {
           <UrlShortener />
         </div>
         
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 md:absolute md:left-0 md:bottom-0">
           <div className="p-6 rounded-lg bg-accent text-center">
             <h3 className="text-xl font-semibold mb-2">Quick & Easy</h3>
             <p className="text-muted-foreground">Shorten URLs with just a single click</p>

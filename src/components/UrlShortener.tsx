@@ -1,52 +1,30 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { shortenUrl } from '@/services/urlService';
 import { toast } from 'sonner';
 import { Copy } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+
+interface FormData {
+  url: string;
+  expirationDays: number;
+}
 
 const UrlShortener = () => {
-  const [url, setUrl] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isValidUrl, setIsValidUrl] = useState(true);
 
-  const validateUrl = (value: string) => {
-    // Basic URL validation
-    try {
-      new URL(value);
-      setIsValidUrl(true);
-      return true;
-    } catch {
-      if (value) {
-        setIsValidUrl(false);
-      } else {
-        setIsValidUrl(true);
-      }
-      return false;
-    }
-  };
-
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setUrl(value);
-    validateUrl(value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateUrl(url)) {
-      toast.error('Please enter a valid URL');
-      return;
-    }
-
+  const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setShortUrl(null);
 
     try {
-      const response = await shortenUrl(url);
+      const response = await shortenUrl({
+        url: data.url,
+        expirationDays: Number(data.expirationDays)
+      });
       
       if (response.success && response.shortUrl) {
         setShortUrl(response.shortUrl);
@@ -70,24 +48,52 @@ const UrlShortener = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
+          <label htmlFor="url" className="block text-sm font-medium text-gray-700">URL</label>
           <Input
             type="text"
             placeholder="Enter your long URL here"
-            value={url}
-            onChange={handleUrlChange}
-            className={`w-full p-3 ${!isValidUrl ? 'border-red-500' : ''}`}
+            {...register('url', { 
+              required: true,
+              pattern: {
+                value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
+                message: 'Please enter a valid URL'
+              }
+            })}
+            className={`w-full p-3 ${errors.url ? 'border-red-500' : ''}`}
             disabled={isLoading}
           />
-          {!isValidUrl && (
-            <p className="text-red-500 text-sm">Please enter a valid URL</p>
+          {errors.url && (
+            <p className="text-red-500 text-sm">{errors.url.message || 'URL is required'}</p>
           )}
         </div>
-        
+        <div className="space-y-2">
+          <label htmlFor="expirationDays" className="block text-sm font-medium text-gray-700">Expiration Days</label>
+          <Input
+            type="number"
+            placeholder="Expiration days"
+            {...register('expirationDays', { 
+              required: true,
+              min: {
+                value: 1,
+                message: 'Expiration days must be at least 1'
+              },
+              max: {
+                value: 365,
+                message: 'Expiration days cannot exceed 365'
+              }
+            })}
+            className={`w-full p-3 ${errors.expirationDays ? 'border-red-500' : ''}`}
+            disabled={isLoading}
+          />
+          {errors.expirationDays && (
+            <p className="text-red-500 text-sm">{errors.expirationDays.message || 'Expiration days is required'}</p>
+          )}
+        </div>
         <Button
           type="submit"
-          disabled={isLoading || !url}
+          disabled={isLoading}
           className="w-full bg-brand hover:bg-brand-dark transition-colors"
         >
           {isLoading ? 'Shortening...' : 'Shorten URL'}

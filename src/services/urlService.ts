@@ -1,32 +1,35 @@
-
 interface ShortenResponse {
   success: boolean;
   shortUrl?: string;
   error?: string;
 }
 
-export async function shortenUrl(url: string): Promise<ShortenResponse> {
+interface ShortenUrlRequest {
+  url: string;
+  expirationDays: number;
+}
+
+export async function shortenUrl(data: ShortenUrlRequest): Promise<ShortenResponse> {
   try {
-    // Using a free URL shortener API
-    const response = await fetch('https://api.shrtco.de/v2/shorten', {
+    const response = await fetch('http://3.108.58.212:8080/api/v1/urls', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify(data),
     });
 
-    const data = await response.json();
+    const responseData = await response.json();
 
-    if (data.ok) {
+    if (response.ok) {
       return {
         success: true,
-        shortUrl: data.result.full_short_link,
+        shortUrl: responseData.shortUrl,
       };
     } else {
       return {
         success: false,
-        error: data.error || 'Failed to shorten URL',
+        error: responseData.message || 'Failed to shorten URL',
       };
     }
   } catch (error) {
