@@ -35,6 +35,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            IMAGE_REACT=ghcr.io/${{ github.repository_owner }}/nirdeshak
             docker pull $IMAGE_REACT:latest
             docker stop nirdeshak || true && docker rm nirdeshak || true
             docker run -d --name nirdeshak -p 3000:80 $IMAGE_REACT:latest
