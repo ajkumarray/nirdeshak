@@ -12,6 +12,7 @@ interface HeaderProps {
 
 const Header = ({ className }: HeaderProps) => {
   const { isAuthenticated, user, logout } = useAuth();
+  const showLogin = false;
 
   const handleLogout = () => {
     logout();
@@ -30,35 +31,36 @@ const Header = ({ className }: HeaderProps) => {
           </h1>
         </Link>
 
-        <div className="flex items-center space-x-4">
-          {isAuthenticated ? (
-            <>
-              <div className="hidden md:flex items-center text-sm">
-                <User className="h-4 w-4 mr-2" />
-                <span>Hello, {user?.name || user?.email}</span>
-              </div>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-2" />
-                <span>Logout</span>
-              </Button>
-            </>
-          ) : (
-            <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  <span>Login</span>
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button variant="default" size="sm">
+        {showLogin && (
+          <div className="flex items-center space-x-4">
+            {isAuthenticated ? (
+              <>
+                <div className="hidden md:flex items-center text-sm">
                   <User className="h-4 w-4 mr-2" />
-                  <span>Sign Up</span>
+                  <span>Hello, {user?.name || user?.email}</span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  <span>Logout</span>
                 </Button>
-              </Link>
-            </>
-          )}
-        </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">
+                    <LogIn className="h-4 w-4 mr-2" />
+                    <span>Login</span>
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="default" size="sm">
+                    <User className="h-4 w-4 mr-2" />
+                    <span>Sign Up</span>
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>)}
       </div>
     </header>
   );
