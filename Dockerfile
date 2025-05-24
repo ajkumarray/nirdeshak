@@ -4,6 +4,7 @@ FROM node:18-alpine as builder
 WORKDIR /app
 
 COPY package*.json ./
+RUN rm -rf dist node_modules
 RUN npm install
 
 COPY . .
