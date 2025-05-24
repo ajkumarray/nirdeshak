@@ -36,8 +36,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             IMAGE_REACT=ghcr.io/${{ github.repository_owner }}/nirdeshak
-            echo "${{secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull $IMAGE_REACT:latest
             docker stop nirdeshak || true && docker rm nirdeshak || true
-            docker run -d --name nirdeshak -p 3000:80 $IMAGE_REACT:latest
+            docker run -d --name nirdeshak -p 80:80 $IMAGE_REACT:latest
             echo "React app deployed successfully"
