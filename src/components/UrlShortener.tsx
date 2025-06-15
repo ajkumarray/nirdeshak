@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { shortenUrl } from '@/services/urlService';
+// import { shortenUrl } from '@/services/urlService';
+import { urlService } from '@/services/api/urlApi';
 import { toast } from 'sonner';
 import { Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface FormData {
   url: string;
@@ -16,23 +18,27 @@ const UrlShortener = () => {
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { isAuthenticated } = useAuth();
+
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setShortUrl(null);
 
     try {
-      const response = await shortenUrl({
+      const response = await urlService.shortenUrl({
         url: data.url,
-        expirationDays: Number(data.expirationDays)
-      });
-      
-      if (response.success && response.shortUrl) {
-        setShortUrl(response.shortUrl);
-        toast.success('URL shortened successfully!');
-      } else {
-        toast.error(response.error || 'Failed to shorten URL');
-      }
-    } catch (error) {
+        expirationDays: Number(data.expirationDays),
+        status: "ACTIVE"
+      }, isAuthenticated);
+
+      console.log("url shortener response from tsx", response);
+      // if (response.success && response.shortUrl) {
+      setShortUrl(response.lc.shortUrl);
+      //   toast.success('URL shortened successfully!');
+      // } else {
+      //   toast.error(response.error || 'Failed to shorten URL');
+      // }
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);
@@ -54,7 +60,7 @@ const UrlShortener = () => {
           <Input
             type="text"
             placeholder="Enter your long URL here"
-            {...register('url', { 
+            {...register('url', {
               required: true,
               pattern: {
                 value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
@@ -73,7 +79,7 @@ const UrlShortener = () => {
           <Input
             type="number"
             placeholder="Expiration days"
-            {...register('expirationDays', { 
+            {...register('expirationDays', {
               required: true,
               min: {
                 value: 1,
@@ -103,17 +109,17 @@ const UrlShortener = () => {
       {shortUrl && (
         <div className="mt-6 p-4 rounded-lg bg-accent animate-fade-in">
           <div className="flex items-center justify-between">
-            <a 
-              href={shortUrl} 
-              target="_blank" 
+            <a
+              href={shortUrl}
+              target="_blank"
               rel="noopener noreferrer"
               className="text-brand-dark font-medium hover:underline truncate mr-2"
             >
               {shortUrl}
             </a>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={copyToClipboard}
               className="shrink-0"
             >

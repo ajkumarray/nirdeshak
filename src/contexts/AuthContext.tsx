@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface User {
@@ -21,17 +20,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Check if user is authenticated on component mount
-    const storedIsAuth = localStorage.getItem('isAuthenticated');
+    const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     
-    if (storedIsAuth === 'true' && storedUser) {
+    if (token && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
         setIsAuthenticated(true);
       } catch (error) {
         console.error('Failed to parse user from localStorage');
-        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
     }
@@ -40,14 +39,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (userData: User) => {
     setUser(userData);
     setIsAuthenticated(true);
-    localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
   };
 

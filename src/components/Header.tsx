@@ -23,12 +23,8 @@ const Header = ({ className }: HeaderProps) => {
     <header className={cn("w-full py-4 bg-white shadow-md sticky top-0 z-10", className)}>
       <div className="container flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <div className="h-8 w-8 rounded-full bg-brand flex items-center justify-center shadow-sm">
-            <span className="text-white font-bold text-lg">S</span>
-          </div>
-          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-brand to-brand-dark text-transparent bg-clip-text">
-            URL Shortener
-          </h1>
+          <img src="logo-sm.png" alt="" className="w-auto h-9 rounded-lg md:hidden" />
+          <img src="logo.png" alt="" className="w-auto h-9 rounded-lg md:block hidden" />
         </Link>
 
         {showLogin && (
@@ -49,18 +45,18 @@ const Header = ({ className }: HeaderProps) => {
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
                     <LogIn className="h-4 w-4 mr-2" />
-                    <span>Login</span>
-                  </Button>
-                </Link>
-                <Link to="/signup">
-                  <Button variant="default" size="sm">
-                    <User className="h-4 w-4 mr-2" />
-                    <span>Sign Up</span>
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>)}
+                  <span>Sign In</span>
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button variant="default" size="sm">
+                  <User className="h-4 w-4 mr-2" />
+                  <span>Sign Up</span>
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>)}
       </div>
     </header>
   );
