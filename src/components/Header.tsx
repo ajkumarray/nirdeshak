@@ -12,7 +12,7 @@ interface HeaderProps {
 
 const Header = ({ className }: HeaderProps) => {
   const { isAuthenticated, user, logout } = useAuth();
-  const showLogin = false;
+  // const showLogin = false;
 
   const handleLogout = () => {
     logout();
@@ -27,7 +27,7 @@ const Header = ({ className }: HeaderProps) => {
           <img src="logo.png" alt="" className="w-auto h-9 rounded-lg md:block hidden" />
         </Link>
 
-        {showLogin && (
+        {/* {showLogin && ( */}
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
@@ -56,7 +56,8 @@ const Header = ({ className }: HeaderProps) => {
               </Link>
             </>
           )}
-        </div>)}
+        </div>
+        {/* )} */}
       </div>
     </header>
   );
