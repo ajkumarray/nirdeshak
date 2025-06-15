@@ -6,11 +6,11 @@ on:
       - master
 
 jobs:
-  deploy-react:
+  deploy:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_REACT: ghcr.io/${{ github.repository_owner }}/nirdeshak
+      IMAGE: ghcr.io/${{ github.repository_owner }}/nirdeshak
 
     steps:
       - name: Checkout code
@@ -22,22 +22,22 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build React Docker Image
-        run: docker build -t $IMAGE_REACT:latest .
+      - name: Build Docker Image
+        run: docker build -t $IMAGE:latest .
 
       - name: Push Docker image to GHCR
-        run: docker push $IMAGE_REACT:latest
+        run: docker push $IMAGE:latest
 
-      - name: SSH into EC2 and deploy React app
+      - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            IMAGE_REACT=ghcr.io/${{ github.repository_owner }}/nirdeshak
+            IMAGE=ghcr.io/${{ github.repository_owner }}/nirdeshak
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker pull $IMAGE_REACT:latest
+            docker pull $IMAGE:latest
             docker stop nirdeshak || true && docker rm nirdeshak || true
-            docker run -d --name nirdeshak -p 3000:80 $IMAGE_REACT:latest
-            echo "React app deployed successfully"
+            docker run -d --name nirdeshak -p 3000:80 $IMAGE:latest
+            echo "Deployment successfully"
