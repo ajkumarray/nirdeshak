@@ -63,8 +63,8 @@ const UrlShortener = () => {
             {...register('url', {
               required: true,
               pattern: {
-                value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
-                message: 'Please enter a valid URL'
+                value: /^(https?:\/\/)([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/,
+                message: 'Please enter a valid URL',
               }
             })}
             className={`w-full p-3 ${errors.url ? 'border-red-500' : ''}`}
