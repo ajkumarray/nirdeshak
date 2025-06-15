@@ -58,7 +58,7 @@ export const generateAlphaNumericCode = (length: number) => {
 }
 
 export const getUserCode = () => {
-  const userCode = Cookies.get('userCode');
+  const userCode = getCookies('userCode');
   if (!userCode) {
     const code = generateAlphaNumericCode(8);
     setCookies('userCode', code);
