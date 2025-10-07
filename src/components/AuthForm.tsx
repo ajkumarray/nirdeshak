@@ -178,7 +178,7 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
         </Button>
       </form>
 
-      <div className="relative">
+      {/* <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
@@ -187,9 +187,9 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
             Or continue with
           </span>
         </div>
-      </div>
+      </div> */}
 
-      <Button
+      {/* <Button
         variant="outline"
         type="button"
         className="w-full"
@@ -213,7 +213,7 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
           <path d="M12 8 v8" />
         </svg>
         Google
-      </Button>
+      </Button> */}
 
       <div className="text-center text-sm">
         {isLogin ? "Don't have an account? " : "Already have an account? "}

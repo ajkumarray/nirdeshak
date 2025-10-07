@@ -15,7 +15,7 @@ export const urlService = {
   shortenUrl: async (data: ShortenUrlRequest, isAuthenticated: boolean): Promise<ApiResponse<ShortenUrlResponse>> => {
     const api = createAxiosInstance(isAuthenticated);
     try {
-      const baseUrl = isAuthenticated ? 'api/v1/url' : 'api/v1/public/url';
+      const baseUrl = isAuthenticated ? 'url' : 'public/url';
       const response = await api.post<ApiResponse<ShortenUrlResponse>>(baseUrl, data);
       if (response.status === 200) {
         return response.data;

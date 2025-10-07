@@ -12,7 +12,7 @@ interface HeaderProps {
 
 const Header = ({ className }: HeaderProps) => {
   const { isAuthenticated, user, logout } = useAuth();
-  const showLogin = false;
+  const showLogin = true;
 
   const handleLogout = () => {
     logout();

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getUserCode } from '../../lib/utils';
-const BASE_URL = 'https://api.url.ajkumarray.com/';
+const BASE_URL = 'https://api.url.ajkumarray.com/api/v1';
 
 export const commonHeaders = {
   'Content-Type': 'application/json',
