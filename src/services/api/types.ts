@@ -1,11 +1,5 @@
 import { AxiosError } from 'axios';
 
-export interface ApiError {
-  message: string;
-  code?: string;
-  status?: number;
-}
-
 export interface ApiErrorDetails {
   errorCode: string;
   errorMessage: string;
@@ -32,15 +26,6 @@ export interface LoginRequest {
 export interface SignupRequest extends LoginRequest {
   name: string;
   profilePic?: string;
-}
-
-export interface ForgotPasswordRequest {
-  email: string;
-}
-
-export interface ResetPasswordRequest {
-  token: string;
-  password: string;
 }
 
 export type ApiErrorResponse = AxiosError<{

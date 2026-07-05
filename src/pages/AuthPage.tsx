@@ -37,7 +37,7 @@ const AuthPage = () => {
       
       <Card className="w-full">
         <CardContent className="pt-6">
-          <AuthForm isLogin={isLogin} />
+          <AuthForm key={location.pathname} isLogin={isLogin} />
         </CardContent>
       </Card>
     </div>

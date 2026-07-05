@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LogIn, UserPlus, Mail, User } from "lucide-react";
+import { LogIn, UserPlus, Mail, User, Eye, EyeOff } from "lucide-react";
 import { authService } from "@/services/api/publicApi";
 import { useAuth } from "@/contexts/AuthContext";
+import { setCookies } from "@/lib/utils";
+
+const TOKEN_EXPIRY_DAYS = 7;
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -17,6 +20,7 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -32,8 +36,8 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
         });
 
         if (response.mc === "M01203" && response.lc?.token) {
-          // Store token in localStorage
-          localStorage.setItem("token", response.lc.token);
+          // Store token in a cookie
+          setCookies("token", response.lc.token, TOKEN_EXPIRY_DAYS);
           // Update auth context with user data
           login({
             email,
@@ -55,8 +59,8 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
         });
 
         if (response.mc === "M01201" && response.lc?.token) {
-          // Store token in localStorage
-          localStorage.setItem("token", response.lc.token);
+          // Store token in a cookie
+          setCookies("token", response.lc.token, TOKEN_EXPIRY_DAYS);
           // Update auth context with user data
           login({
             email,
@@ -147,14 +151,25 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
               </Link>
             )}
           </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder={isLogin ? "••••••••" : "Create a password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder={isLogin ? "••••••••" : "Create a password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pr-10"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           {!isLogin && (
             <p className="text-xs text-muted-foreground">
               Must be at least 8 characters

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 // import { shortenUrl } from '@/services/urlService';
 import { urlService } from '@/services/api/urlApi';
 import { toast } from 'sonner';
-import { Copy } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -17,12 +17,14 @@ const UrlShortener = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const { isAuthenticated } = useAuth();
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setShortUrl(null);
+    setIsCopied(false);
 
     try {
       const response = await urlService.shortenUrl({
@@ -49,6 +51,8 @@ const UrlShortener = () => {
     if (shortUrl) {
       navigator.clipboard.writeText(shortUrl);
       toast.success('URL copied to clipboard!');
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 1500);
     }
   };
 
@@ -56,7 +60,7 @@ const UrlShortener = () => {
     <div className="w-full max-w-md mx-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <label htmlFor="url" className="block text-sm font-medium text-gray-700">URL</label>
+          <label htmlFor="url" className="block text-sm font-medium text-foreground">URL</label>
           <Input
             type="text"
             placeholder="Enter your long URL here"
@@ -67,15 +71,15 @@ const UrlShortener = () => {
                 message: 'Please enter a valid URL'
               }
             })}
-            className={`w-full p-3 ${errors.url ? 'border-red-500' : ''}`}
+            className={errors.url ? 'border-destructive focus-visible:ring-destructive' : ''}
             disabled={isLoading}
           />
           {errors.url && (
-            <p className="text-red-500 text-sm">{errors.url.message || 'URL is required'}</p>
+            <p className="text-destructive text-sm">{errors.url.message || 'URL is required'}</p>
           )}
         </div>
         <div className="space-y-2">
-          <label htmlFor="expirationDays" className="block text-sm font-medium text-gray-700">Expiration Days</label>
+          <label htmlFor="expirationDays" className="block text-sm font-medium text-foreground">Expiration Days</label>
           <Input
             type="number"
             placeholder="Expiration days"
@@ -90,18 +94,14 @@ const UrlShortener = () => {
                 message: 'Expiration days cannot exceed 365'
               }
             })}
-            className={`w-full p-3 ${errors.expirationDays ? 'border-red-500' : ''}`}
+            className={errors.expirationDays ? 'border-destructive focus-visible:ring-destructive' : ''}
             disabled={isLoading}
           />
           {errors.expirationDays && (
-            <p className="text-red-500 text-sm">{errors.expirationDays.message || 'Expiration days is required'}</p>
+            <p className="text-destructive text-sm">{errors.expirationDays.message || 'Expiration days is required'}</p>
           )}
         </div>
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-brand hover:bg-brand-dark transition-colors"
-        >
+        <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? 'Shortening...' : 'Shorten URL'}
         </Button>
       </form>
@@ -113,7 +113,7 @@ const UrlShortener = () => {
               href={shortUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-brand-dark font-medium hover:underline truncate mr-2"
+              className="text-primary font-medium hover:underline truncate mr-2"
             >
               {shortUrl}
             </a>
@@ -122,8 +122,9 @@ const UrlShortener = () => {
               size="sm"
               onClick={copyToClipboard}
               className="shrink-0"
+              aria-label="Copy short URL"
             >
-              <Copy className="h-4 w-4" />
+              {isCopied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
             </Button>
           </div>
         </div>

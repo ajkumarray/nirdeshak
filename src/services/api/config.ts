@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { getUserCode } from '../../lib/utils';
-const BASE_URL = 'https://api.url.ajkumarray.com/api/v1';
+import { getUserCode, getCookies, removeCookies } from '../../lib/utils';
+// const BASE_URL = 'https://api.url.ajkumarray.com/api/v1';
+const BASE_URL = 'http://localhost:8080/api/v1';
 
 export const commonHeaders = {
   'Content-Type': 'application/json',
@@ -19,7 +20,7 @@ export const createAxiosInstance = (withAuth = false) => {
   instance.interceptors.request.use(
     (config) => {
       if (withAuth) {
-        const token = localStorage.getItem('token');
+        const token = getCookies('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         } else {
@@ -46,7 +47,7 @@ export const createAxiosInstance = (withAuth = false) => {
     (error) => {
       if (error.response?.status === 401) {
         // Handle unauthorized access
-        localStorage.removeItem('token');
+        removeCookies('token');
         localStorage.removeItem('user');
         window.location.href = '/login';
       }
