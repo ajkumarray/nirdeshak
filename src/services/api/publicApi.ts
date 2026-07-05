@@ -11,11 +11,11 @@ export const authService = {
     } catch (error) {
       const apiError = error as ApiErrorResponse;
       return {
-        mc: "E00000",
-        m: "Login failed",
+        mc: apiError.response?.data?.mc || "E00000",
+        m: apiError.response?.data?.m || "Login failed",
         err: {
-          errorCode: "E00000",
-          errorMessage: apiError.response?.data?.message || 'Failed to login'
+          errorCode: apiError.response?.data?.err?.errorCode || "E00000",
+          errorMessage: apiError.response?.data?.err?.errorMessage || apiError.response?.data?.m || 'Failed to login'
         }
       };
     }
@@ -28,11 +28,11 @@ export const authService = {
     } catch (error) {
       const apiError = error as ApiErrorResponse;
       return {
-        mc: "E00000",
-        m: "Registration failed",
+        mc: apiError.response?.data?.mc || "E00000",
+        m: apiError.response?.data?.m || "Registration failed",
         err: {
-          errorCode: "E00000",
-          errorMessage: apiError.response?.data?.message || 'Failed to register'
+          errorCode: apiError.response?.data?.err?.errorCode || "E00000",
+          errorMessage: apiError.response?.data?.err?.errorMessage || apiError.response?.data?.m || 'Failed to register'
         }
       };
     }

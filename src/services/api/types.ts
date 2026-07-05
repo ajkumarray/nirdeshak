@@ -29,7 +29,7 @@ export interface SignupRequest extends LoginRequest {
 }
 
 export type ApiErrorResponse = AxiosError<{
-  message: string;
-  status: number;
-  data?: Record<string, unknown>;
-}>; 
+  mc?: string;
+  m?: string;
+  err?: ApiErrorDetails;
+}>;

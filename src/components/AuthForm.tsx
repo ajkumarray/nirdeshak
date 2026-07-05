@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LogIn, UserPlus, Mail, User, Eye, EyeOff } from "lucide-react";
+import { LogIn, UserPlus, Mail, User, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { authService } from "@/services/api/publicApi";
 import { useAuth } from "@/contexts/AuthContext";
 import { setCookies } from "@/lib/utils";
@@ -21,12 +21,14 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setFormError(null);
 
     try {
       if (isLogin) {
@@ -48,6 +50,7 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
         } else {
           // Handle error case
           const errorMessage = response.err?.errorMessage || response.m || "Failed to log in. Please try again.";
+          setFormError(errorMessage);
           toast.error(errorMessage);
         }
       } else {
@@ -71,11 +74,14 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
         } else {
           // Handle error case
           const errorMessage = response.err?.errorMessage || response.m || "Failed to create account. Please try again.";
+          setFormError(errorMessage);
           toast.error(errorMessage);
         }
       }
     } catch (error) {
-      toast.error(isLogin ? "Failed to log in. Please try again." : "Failed to create account. Please try again.");
+      const errorMessage = isLogin ? "Failed to log in. Please try again." : "Failed to create account. Please try again.";
+      setFormError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -192,6 +198,13 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
           )}
         </Button>
       </form>
+
+      {formError && (
+        <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+          <span>{formError}</span>
+        </div>
+      )}
 
       {/* <div className="relative">
         <div className="absolute inset-0 flex items-center">

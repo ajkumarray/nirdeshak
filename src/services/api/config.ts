@@ -44,8 +44,9 @@ export const createAxiosInstance = (withAuth = false) => {
   instance.interceptors.response.use(
     (response) => response,
     (error) => {
-      if (error.response?.status === 401) {
-        // Handle unauthorized access
+      if (withAuth && error.response?.status === 401) {
+        // Handle unauthorized access (only for authenticated requests —
+        // a 401 from a public endpoint like login just means bad credentials)
         removeCookies('token');
         localStorage.removeItem('user');
         window.location.href = '/login';

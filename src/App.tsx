@@ -16,7 +16,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
-        <Sonner />
+        <Sonner position="top-right" />
         <BrowserRouter>
           <div className="min-h-screen flex flex-col">
             <Header />
