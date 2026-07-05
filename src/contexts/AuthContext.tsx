@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getCookies, removeCookies } from '@/lib/utils';
 
 interface User {
   name?: string;
@@ -8,6 +9,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isInitializing: boolean;
   login: (user: User) => void;
   logout: () => void;
 }
@@ -17,12 +19,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
 
   useEffect(() => {
     // Check if user is authenticated on component mount
-    const token = localStorage.getItem('token');
+    const token = getCookies('token');
     const storedUser = localStorage.getItem('user');
-    
+
     if (token && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
@@ -30,10 +33,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsAuthenticated(true);
       } catch (error) {
         console.error('Failed to parse user from localStorage');
-        localStorage.removeItem('token');
+        removeCookies('token');
         localStorage.removeItem('user');
       }
     }
+
+    setIsInitializing(false);
   }, []);
 
   const login = (userData: User) => {
@@ -45,13 +50,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('token');
+    removeCookies('token');
     localStorage.removeItem('user');
   };
 
   const value = {
     user,
     isAuthenticated,
+    isInitializing,
     login,
     logout,
   };

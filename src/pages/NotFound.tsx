@@ -15,7 +15,10 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
+    <div
+      className="flex flex-col items-center justify-center p-4"
+      style={{ height: 'calc(100vh - 5rem)' }}
+    >
       <div className="text-center max-w-md">
         <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-brand to-brand-dark text-transparent bg-clip-text">404</h1>
         <p className="text-xl text-foreground mb-8">Oops! This page has vanished like a long URL that needs shortening.</p>

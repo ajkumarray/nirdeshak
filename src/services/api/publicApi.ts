@@ -1,5 +1,5 @@
 import { createAxiosInstance } from './config';
-import { AuthResponse, LoginRequest, SignupRequest, ForgotPasswordRequest, ResetPasswordRequest, ApiErrorResponse } from './types';
+import { AuthResponse, LoginRequest, SignupRequest, ApiErrorResponse } from './types';
 
 const publicApi = createAxiosInstance(false);
 
@@ -33,40 +33,6 @@ export const authService = {
         err: {
           errorCode: "E00000",
           errorMessage: apiError.response?.data?.message || 'Failed to register'
-        }
-      };
-    }
-  },
-
-  forgotPassword: async (data: ForgotPasswordRequest): Promise<AuthResponse> => {
-    try {
-      const response = await publicApi.post<AuthResponse>('/auth/forgot-password', data);
-      return response.data;
-    } catch (error) {
-      const apiError = error as ApiErrorResponse;
-      return {
-        mc: "E00000",
-        m: "Password reset request failed",
-        err: {
-          errorCode: "E00000",
-          errorMessage: apiError.response?.data?.message || 'Failed to process forgot password request'
-        }
-      };
-    }
-  },
-
-  resetPassword: async (data: ResetPasswordRequest): Promise<AuthResponse> => {
-    try {
-      const response = await publicApi.post<AuthResponse>('/auth/reset-password', data);
-      return response.data;
-    } catch (error) {
-      const apiError = error as ApiErrorResponse;
-      return {
-        mc: "E00000",
-        m: "Password reset failed",
-        err: {
-          errorCode: "E00000",
-          errorMessage: apiError.response?.data?.message || 'Failed to reset password'
         }
       };
     }

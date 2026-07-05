@@ -33,25 +33,6 @@ export const decrypt = (value: any) => {
   }
 }
 
-export const setLocalStorage = (key: string, value: any) => {
-  try {
-    const encrypted = encrypt(value);
-    localStorage.setItem(key, encrypted);
-  } catch (error) {
-    console.error('Error setting local storage:', error);
-  }
-}
-
-export const getLocalStorage = (key: string) => {
-  const encrypted = localStorage.getItem(key);
-  if (!encrypted) return null;
-  return decrypt(encrypted);
-}
-
-export const removeLocalStorage = (key: string) => {
-  localStorage.removeItem(key);
-}
-
 export const generateAlphaNumericCode = (length: number) => {
   const code = "ND" + Math.random().toString(36).substring(2, 2 + length);
   return code;
@@ -67,9 +48,9 @@ export const getUserCode = () => {
   return userCode;
 }
 
-export const setCookies = (key: string, value: any) => {
+export const setCookies = (key: string, value: any, expiresInDays?: number) => {
   const encrypted = encrypt(value);
-  Cookies.set(key, encrypted);
+  Cookies.set(key, encrypted, expiresInDays ? { expires: expiresInDays } : undefined);
 }
 
 export const getCookies = (key: string) => {

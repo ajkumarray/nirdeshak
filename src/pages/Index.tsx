@@ -1,34 +1,27 @@
 import UrlShortener from "@/components/UrlShortener";
-import { useAuth } from "@/contexts/AuthContext";
-import { getLocalStorage } from "@/lib/utils";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Zap, Gift, ShieldCheck } from "lucide-react";
+
+const features = [
+  {
+    icon: Zap,
+    title: "Quick & Easy",
+    description: "Shorten URLs with just a single click",
+  },
+  {
+    icon: Gift,
+    title: "Free to Use",
+    description: "No sign up or subscription required",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Reliable Service",
+    description: "Fast and dependable link shortening",
+  },
+];
 
 const Index = () => {
-  const { isAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
-  const setLoginFalse = false;
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const token = getLocalStorage('token');
-      if (token) {
-        // setLoginFalse(true);
-        console.log("logged in")
-      }
-    }
-    checkAuth();
-  }, []);
-
   return (
     <main className="flex flex-col container max-w-4xl px-4" style={{ height: 'calc(100vh - 5rem)' }}>
-      { isAuthenticated && setLoginFalse && (
-        <div className="mb-8 p-4 bg-accent rounded-lg text-center">
-          <h3 className="font-medium">Welcome back, {user?.name || user?.email}!</h3>
-          <p className="text-sm text-muted-foreground">You're now logged in and can access all features.</p>
-        </div>
-      )}
-
       <section className="text-center my-6">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
           Shorten Your Links
@@ -46,20 +39,17 @@ const Index = () => {
       <div className="flex-grow"></div>
 
       <section className="mt-4">
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="p-6 rounded-lg bg-accent text-center">
-            <h3 className="text-xl font-semibold mb-2">Quick & Easy</h3>
-            <p className="text-muted-foreground">Shorten URLs with just a single click</p>
-          </div>
-          <div className="p-6 rounded-lg bg-accent text-center">
-            <h3 className="text-xl font-semibold mb-2">Free to Use</h3>
-            <p className="text-muted-foreground">No sign up or subscription required</p>
-          </div>
-          <div className="p-6 rounded-lg bg-accent text-center">
-            <h3 className="text-xl font-semibold mb-2">Reliable Service</h3>
-            <p className="text-muted-foreground">Fast and dependable link shortening</p>
-          </div>
-        </section>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {features.map(({ icon: Icon, title, description }) => (
+            <div key={title} className="p-6 rounded-lg bg-accent text-center">
+              <div className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary mb-3">
+                <Icon className="h-5 w-5" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{title}</h3>
+              <p className="text-muted-foreground">{description}</p>
+            </div>
+          ))}
+        </div>
 
         <footer className="py-6 border-t">
           <div className="container text-center text-sm text-muted-foreground">
