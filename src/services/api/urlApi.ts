@@ -1,15 +1,19 @@
 import { createAxiosInstance } from './config';
-import { ApiResponse } from './types';
+import { ApiResponse, ApiErrorResponse } from './types';
 
 interface ShortenUrlRequest {
   url: string;
   expirationDays: number;
   status: string;
+  code?: string;
 }
 
 interface ShortenUrlResponse {
   shortUrl: string;
+  code?: string;
 }
+
+type ShortenUrlApiResponse = ApiResponse<ShortenUrlResponse> & { httpStatus?: number };
 
 export interface UrlItem {
   id: number;
@@ -33,17 +37,28 @@ export interface PagedResponse<T> {
 }
 
 export const urlService = {
-  shortenUrl: async (data: ShortenUrlRequest, isAuthenticated: boolean): Promise<ApiResponse<ShortenUrlResponse>> => {
+  shortenUrl: async (data: ShortenUrlRequest, isAuthenticated: boolean): Promise<ShortenUrlApiResponse> => {
     const api = createAxiosInstance(isAuthenticated);
+    // `code` (custom short code) is only honored on the authenticated endpoint —
+    // strip it here so it can never leak onto the anonymous/public request.
+    const payload: ShortenUrlRequest = isAuthenticated
+      ? data
+      : { url: data.url, expirationDays: data.expirationDays, status: data.status };
     try {
       const baseUrl = isAuthenticated ? 'url' : 'public/url';
-      const response = await api.post<ApiResponse<ShortenUrlResponse>>(baseUrl, data);
-      if (response.status === 200) {
-        return response.data;
-      }
+      const response = await api.post<ApiResponse<ShortenUrlResponse>>(baseUrl, payload);
       return response.data;
     } catch (error) {
-      return error;
+      const apiError = error as ApiErrorResponse;
+      return {
+        mc: apiError.response?.data?.mc || "E00000",
+        m: apiError.response?.data?.m || "Failed to shorten URL",
+        err: {
+          errorCode: apiError.response?.data?.err?.errorCode || "E00000",
+          errorMessage: apiError.response?.data?.err?.errorMessage || apiError.response?.data?.m || 'Failed to shorten URL'
+        },
+        httpStatus: apiError.response?.status
+      };
     }
   },
 

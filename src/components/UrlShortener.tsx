@@ -8,13 +8,16 @@ import { Check, Copy } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
 
+const CUSTOM_CODE_PATTERN = /^[A-Za-z0-9_-]{4,20}$/;
+
 interface FormData {
   url: string;
   expirationDays: number;
+  code?: string;
 }
 
 const UrlShortener = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<FormData>();
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -25,21 +28,28 @@ const UrlShortener = () => {
     setIsLoading(true);
     setShortUrl(null);
     setIsCopied(false);
+    clearErrors('code');
+
+    const customCode = isAuthenticated ? data.code?.trim() : undefined;
 
     try {
       const response = await urlService.shortenUrl({
         url: data.url,
         expirationDays: Number(data.expirationDays),
-        status: "ACTIVE"
+        status: "ACTIVE",
+        ...(customCode ? { code: customCode } : {})
       }, isAuthenticated);
 
-      console.log("url shortener response from tsx", response);
-      // if (response.success && response.shortUrl) {
+      if (response.err) {
+        if (customCode && (response.httpStatus === 400 || response.httpStatus === 409)) {
+          setError('code', { type: 'server', message: response.err.errorMessage });
+        } else {
+          toast.error(response.err.errorMessage || response.m || 'Failed to shorten URL');
+        }
+        return;
+      }
+
       setShortUrl(response.lc.shortUrl);
-      //   toast.success('URL shortened successfully!');
-      // } else {
-      //   toast.error(response.error || 'Failed to shorten URL');
-      // }
     } catch {
       toast.error('An unexpected error occurred');
     } finally {
@@ -101,6 +111,24 @@ const UrlShortener = () => {
             <p className="text-destructive text-sm">{errors.expirationDays.message || 'Expiration days is required'}</p>
           )}
         </div>
+        {isAuthenticated && (
+          <div className="space-y-2">
+            <label htmlFor="code" className="block text-sm font-medium text-foreground">Custom short code (optional)</label>
+            <Input
+              type="text"
+              placeholder="my-brand"
+              {...register('code', {
+                validate: (value) =>
+                  !value || CUSTOM_CODE_PATTERN.test(value) || 'Use 4-20 letters, digits, hyphens, or underscores'
+              })}
+              className={errors.code ? 'border-destructive focus-visible:ring-destructive' : ''}
+              disabled={isLoading}
+            />
+            {errors.code && (
+              <p className="text-destructive text-sm">{errors.code.message}</p>
+            )}
+          </div>
+        )}
         <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? 'Shortening...' : 'Shorten URL'}
         </Button>
