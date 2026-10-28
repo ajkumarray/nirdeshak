@@ -42,8 +42,8 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
           setCookies("token", response.lc.token, TOKEN_EXPIRY_DAYS);
           // Update auth context with user data
           login({
-            email,
-            name: email.split('@')[0] // Using email username as name since it's not provided in response
+            email: response.lc.userDetails?.email || email,
+            name: response.lc.userDetails?.name
           });
           toast.success(response.m || "Successfully logged in!");
           navigate("/");
@@ -66,8 +66,8 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
           setCookies("token", response.lc.token, TOKEN_EXPIRY_DAYS);
           // Update auth context with user data
           login({
-            email,
-            name
+            email: response.lc.userDetails?.email || email,
+            name: response.lc.userDetails?.name || name
           });
           toast.success(response.m || "Account created successfully!");
           navigate("/");

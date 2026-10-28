@@ -12,8 +12,15 @@ export interface ApiResponse<T> {
   err?: ApiErrorDetails;
 }
 
+export interface UserDetails {
+  name: string;
+  email: string;
+  profilePic?: string;
+}
+
 export interface LoginResponse {
   token: string;
+  userDetails?: UserDetails;
 }
 
 export type AuthResponse = ApiResponse<LoginResponse>;
