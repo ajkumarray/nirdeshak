@@ -37,7 +37,7 @@ const Header = ({ className }: HeaderProps) => {
               <>
                 <div className="hidden md:flex items-center text-sm">
                   <User className="h-4 w-4 mr-2" />
-                  <span>Hello, {user?.name || user?.email}</span>
+                  <span>Hello, {user?.name?.trim().split(/\s+/)[0] || user?.email}</span>
                 </div>
                 {!isOnUrlsPage && (
                   <Link to="/urls">
