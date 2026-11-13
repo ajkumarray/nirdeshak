@@ -20,6 +20,7 @@ export interface UserDetails {
 
 export interface LoginResponse {
   token: string;
+  refreshToken?: string;
   userDetails?: UserDetails;
 }
 

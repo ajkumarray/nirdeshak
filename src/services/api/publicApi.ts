@@ -36,5 +36,12 @@ export const authService = {
         }
       };
     }
+  },
+
+  // Ends the session on the server; the refresh token goes in place of the access token
+  logout: async (refreshToken: string): Promise<void> => {
+    await publicApi.post('/auth/logout', null, {
+      headers: { Authorization: `Bearer ${refreshToken}` },
+    });
   }
 }; 
