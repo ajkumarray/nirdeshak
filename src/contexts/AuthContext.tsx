@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getCookies, removeCookies } from '@/lib/utils';
+import { authService } from '@/services/api/publicApi';
+import { clearSession, getAccessToken, getRefreshToken } from '@/services/api/tokens';
 
 interface User {
   name?: string;
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Check if user is authenticated on component mount
-    const token = getCookies('token');
+    const token = getAccessToken();
     const storedUser = localStorage.getItem('user');
 
     if (token && storedUser) {
@@ -33,8 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsAuthenticated(true);
       } catch (error) {
         console.error('Failed to parse user from localStorage');
-        removeCookies('token');
-        localStorage.removeItem('user');
+        clearSession();
       }
     }
 
@@ -48,10 +48,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
+    // Best effort: the local session is cleared even if the server call fails
+    const refreshToken = getRefreshToken();
+    if (refreshToken) {
+      authService.logout(refreshToken).catch(() => {});
+    }
     setUser(null);
     setIsAuthenticated(false);
-    removeCookies('token');
-    localStorage.removeItem('user');
+    clearSession();
   };
 
   const value = {

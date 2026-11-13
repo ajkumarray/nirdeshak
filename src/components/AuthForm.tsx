@@ -7,9 +7,7 @@ import { toast } from "sonner";
 import { LogIn, UserPlus, Mail, User, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { authService } from "@/services/api/publicApi";
 import { useAuth } from "@/contexts/AuthContext";
-import { setCookies } from "@/lib/utils";
-
-const TOKEN_EXPIRY_DAYS = 7;
+import { saveTokens } from "@/services/api/tokens";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -38,8 +36,8 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
         });
 
         if (response.mc === "M01203" && response.lc?.token) {
-          // Store token in a cookie
-          setCookies("token", response.lc.token, TOKEN_EXPIRY_DAYS);
+          // Store tokens in cookies
+          saveTokens(response.lc.token, response.lc.refreshToken);
           // Update auth context with user data
           login({
             email: response.lc.userDetails?.email || email,
@@ -62,8 +60,8 @@ const AuthForm = ({ isLogin }: AuthFormProps) => {
         });
 
         if (response.mc === "M01201" && response.lc?.token) {
-          // Store token in a cookie
-          setCookies("token", response.lc.token, TOKEN_EXPIRY_DAYS);
+          // Store tokens in cookies
+          saveTokens(response.lc.token, response.lc.refreshToken);
           // Update auth context with user data
           login({
             email: response.lc.userDetails?.email || email,
